@@ -1,0 +1,24 @@
+{
+  "users": {
+    "leo": {
+      "username": "leo",
+      "usernameKey": "leo",
+      "password": "1234",
+      "token": "56fc11522985a0df301374b2b706f36220bde0e783df39360cdc19aa485c7c1e",
+      "id": 1
+    }
+  },
+  "todos": {
+    "leo": [
+      {
+        "id": "80f9b4ae948ca23a5d7b1b396fa1a5e4",
+        "title": "Task 2",
+        "description": "Item 2",
+        "completed": false,
+        "createdAt": "2026-02-17T10:09:00.808Z",
+        "editedAt": null,
+        "completedAt": null
+      }
+    ]
+  }
+}

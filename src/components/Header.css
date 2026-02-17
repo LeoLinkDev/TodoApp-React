@@ -1,0 +1,64 @@
+.app-header {
+  background: linear-gradient(120deg, #312e81, #4f46e5);
+  color: #fff;
+  padding: 1.5rem 0;
+  box-shadow: 0 20px 40px rgba(17, 24, 39, 0.08);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+.session {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.session-user {
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .session {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
