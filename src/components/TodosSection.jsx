@@ -3,6 +3,8 @@ import { useAuth } from '../hooks/useAuth';
 import CardHeader from './TodosCardHeader';
 import StatusMsg from './StatusMsg';
 import TodoForm from './TodosForm';
+import TodosListHeader from './TodosListHeader';
+import TodosList from './TodosList';
 import '../css/Todos.css';
 
 const STORAGE_KEY = 'todoAppState';
@@ -233,170 +235,24 @@ function TodosSection() {
 
       <TodoForm onSubmit={handleCreateTodo} onCancel={() => {}} />
 
-      <div className="list-header">
-        <span>Items</span>
-        <div className="filters" role="group" aria-label="Filter todos">
-          <button
-            className={`chip${filter === 'all' ? ' active' : ''}`}
-            type="button"
-            onClick={() => setFilter('all')}
-          >
-            All
-          </button>
-          <button
-            className={`chip${filter === 'active' ? ' active' : ''}`}
-            type="button"
-            onClick={() => setFilter('active')}
-          >
-            Active
-          </button>
-          <button
-            className={`chip${filter === 'completed' ? ' active' : ''}`}
-            type="button"
-            onClick={() => setFilter('completed')}
-          >
-            Completed
-          </button>
-          <label className="sort-select">
-            <span className="visually-hidden">Sort todos</span>
-            <span className="sort-prefix" aria-hidden="true">
-              Sort:
-            </span>
-            <select
-              id="sort-select"
-              aria-label="Sort todos"
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              disabled={filteredAndSorted.length <= 1}
-            >
-              <option value="created">Created</option>
-              <option value="edited">Edited</option>
-              <option value="title">Title</option>
-              <option value="status">Status</option>
-            </select>
-          </label>
-        </div>
-      </div>
+      <TodosListHeader 
+        filter={filter} 
+        sort={sort} 
+        onFilterChange={setFilter}
+        onSortChange={setSort}
+        isSortDisabled={filteredAndSorted.length <= 1}
+      />
 
-      <ul id="todo-list" className="todo-list" aria-live="polite">
-        {filteredAndSorted.length === 0 ? (
-          <li className="todo-item">No todos yet. Add one above!</li>
-        ) : (
-          filteredAndSorted.map((todo) => {
-            if (todo.id === editingId) {
-              return (
-                <TodoItemEdit
-                  key={todo.id}
-                  todo={todo}
-                  onSave={handleSaveEdit}
-                  onCancel={() => setEditingId(null)}
-                />
-              );
-            }
-            return (
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                onEdit={() => setEditingId(todo.id)}
-                onToggleComplete={() => handleToggleComplete(todo)}
-                onDelete={() => handleDeleteTodo(todo.id)}
-              />
-            );
-          })
-        )}
-      </ul>
-
-      <div id="confetti-overlay" className="confetti-overlay" aria-hidden="true">
-        <div className="confetti-message" role="status" aria-live="polite">
-          Congratulations!
-        </div>
-        <div id="confetti-container" className="confetti-container"></div>
-      </div>
+      <TodosList
+        todos={filteredAndSorted}
+        editingId={editingId}
+        onEdit={setEditingId}
+        onToggleComplete={handleToggleComplete}
+        onDelete={handleDeleteTodo}
+        onSaveEdit={handleSaveEdit}
+        onCancelEdit={() => setEditingId(null)}
+      />
     </section>
-  );
-}
-
-function TodoItem({ todo, onEdit, onToggleComplete, onDelete }) {
-  return (
-    <li className={`todo-item${todo.completed ? ' completed' : ''}`}>
-      <div className="todo-title">
-        <div className="todo-title-main">
-          <h3>{todo.title}</h3>
-        </div>
-        <span className="todo-meta todo-title-status">
-          {todo.completed ? 'Completed' : 'Active'}
-        </span>
-      </div>
-      <p>{todo.description}</p>
-      <p className="todo-meta">Created {new Date(todo.createdAt).toLocaleString()}</p>
-      <p className="todo-meta todo-meta-edited">
-        {todo.editedAt
-          ? `Edited ${new Date(todo.editedAt).toLocaleString()}`
-          : 'Edited —'}
-      </p>
-      <p className="todo-meta todo-meta-edited">
-        {todo.completedAt
-          ? `Completed ${new Date(todo.completedAt).toLocaleString()}`
-          : 'Completed —'}
-      </p>
-      <div className="todo-actions">
-        <button type="button" onClick={onEdit}>
-          Edit
-        </button>
-        <button type="button" onClick={onToggleComplete}>
-          {todo.completed ? 'Mark active' : 'Mark complete'}
-        </button>
-        <button type="button" className="danger" onClick={onDelete}>
-          Delete
-        </button>
-      </div>
-    </li>
-  );
-}
-
-function TodoItemEdit({ todo, onSave, onCancel }) {
-  const [title, setTitle] = useState(todo.title);
-  const [description, setDescription] = useState(todo.description);
-  const [completed, setCompleted] = useState(todo.completed);
-
-  return (
-    <li className="todo-item editing">
-      <label className="todo-edit-label">
-        Title
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </label>
-      <label className="todo-edit-label">
-        Description
-        <textarea
-          rows="3"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        ></textarea>
-      </label>
-      <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={completed}
-          onChange={(e) => setCompleted(e.target.checked)}
-        />
-        Mark as complete
-      </label>
-      <p className="todo-meta">Created {new Date(todo.createdAt).toLocaleString()}</p>
-      <div className="todo-actions">
-        <button type="button" onClick={() => onSave(todo.id, title, description, completed)}>
-          Save
-        </button>
-        <button type="button" onClick={onCancel}>
-          Cancel
-        </button>
-      </div>
-    </li>
   );
 }
 
