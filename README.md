@@ -1,14 +1,29 @@
-# React + Vite
+# A lightweight, multi‑user, Todo React + Vite app with fast inline editing, sorting, and effects.
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
+## Web App Features
+- Multi‑user registration/login with persistent sessions
+- Inline edit on cards
+- Status filtering (All, Active, Completed)
+- Sorting by Created, Edited, Title, or Status
+- Completion and edit timestamp history
+- Refresh animation + confetti celebration when all items are completed
+- Per‑item confetti when marking a single item complete
+- Client‑side state cache with server reconciliation
 ## React Compiler
 
+## Browser Compatibility
+- Chrome (latest)
+- Edge (latest)
+- Firefox (latest)
+- Safari (latest)
+
+## Technologies Used
+- React + Vite
+- Vanilla JavaScript (client)
+- HTML5 + CSS3
+- LocalStorage + Cookies
+- 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
 ## Expanding the ESLint configuration
