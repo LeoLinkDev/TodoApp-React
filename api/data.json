@@ -4,7 +4,7 @@
       "username": "leo",
       "usernameKey": "leo",
       "password": "1234",
-      "token": "56fc11522985a0df301374b2b706f36220bde0e783df39360cdc19aa485c7c1e",
+      "token": "372437e62233ad4dd99ca351c6a446a47064fe1378ef84cedec971cd26cc6da7",
       "id": 1
     }
   },
@@ -25,7 +25,7 @@
         "description": "Item 2",
         "completed": false,
         "createdAt": "2026-02-17T10:24:24.042Z",
-        "editedAt": null,
+        "editedAt": "2026-02-17T10:44:10.738Z",
         "completedAt": null
       }
     ]
