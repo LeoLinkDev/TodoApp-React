@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import CardHeader from './TodosCardHeader';
 import StatusMsg from './StatusMsg';
@@ -27,7 +27,7 @@ const loadStateFromStorage = () => {
 };
 
 function TodosSection() {
-  const { authToken } = useAuth();
+  const { authToken, forceLogout } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   const initialState = loadStateFromStorage();
@@ -41,13 +41,12 @@ function TodosSection() {
   
   // Celebration state
   const [showCelebration, setShowCelebration] = useState(false);
-  const [lastActiveCount, setLastActiveCount] = useState(initialState.todos.filter(t => !t.completed).length);
-  const [lastCompletedCount, setLastCompletedCount] = useState(initialState.todos.filter(t => t.completed).length);
+  const lastActiveCountRef = useRef(initialState.todos.filter(t => !t.completed).length);
 
-  const showStatus = (message, type = 'default') => {
+  const showStatus = useCallback((message, type = 'default') => {
     setStatusMsg(message);
     setStatusType(type);
-  };
+  }, [setStatusMsg, setStatusType]);
 
   const getAuthToken = useCallback(() => {
     const stored = localStorage.getItem('todoAppAuth');
@@ -82,6 +81,11 @@ function TodosSection() {
     });
 
     if (!response.ok) {
+      // Handle 401 Unauthorized - token expired or invalid
+      if (response.status === 401) {
+        forceLogout();
+        throw new Error('Session expired. Please log in again.');
+      }
       const error = await response.json().catch(() => ({ error: 'Request failed' }));
       throw new Error(error.error || 'Request failed');
     }
@@ -91,7 +95,7 @@ function TodosSection() {
     }
 
     return response.json();
-  }, [getAuthToken, API_URL]);
+  }, [getAuthToken, API_URL, forceLogout]);
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
@@ -102,28 +106,28 @@ function TodosSection() {
     }));
   }, [todos, filter, sort]);
 
-  // Check for all-completed celebration
+  // Trigger celebration when all todos are completed
   useEffect(() => {
     const activeCount = todos.filter(t => !t.completed).length;
-    const completedCount = todos.filter(t => t.completed).length;
     const allCompleted = activeCount === 0 && todos.length > 0;
 
-    // Trigger celebration if:
-    // 1. All todos are completed
-    // 2. We just completed something (activeCount decreased)
-    // 3. We haven't shown celebration yet
-    const justCompletedAll = 
-      allCompleted && 
-      lastActiveCount > 0 && 
-      completedCount > lastCompletedCount;
-
-    if (justCompletedAll && !showCelebration) {
-      setShowCelebration(true);
+    // Check if we just completed the last active todo
+    if (allCompleted && lastActiveCountRef.current > 0) {
+      // Use setTimeout with 0 to defer setState and avoid the warning
+      const celebrationTimer = setTimeout(() => {
+        setShowCelebration(true);
+        const hideTimer = setTimeout(() => {
+          setShowCelebration(false);
+        }, 5000); // Auto-hide after 5 seconds
+        return () => clearTimeout(hideTimer);
+      }, 0);
+      
+      return () => clearTimeout(celebrationTimer);
     }
 
-    setLastActiveCount(activeCount);
-    setLastCompletedCount(completedCount);
-  }, [todos, lastActiveCount, lastCompletedCount, showCelebration]);
+    // Update refs after checking conditions
+    lastActiveCountRef.current = activeCount;
+  }, [todos]);
 
   const fetchTodos = useCallback(async () => {
     try {
@@ -135,7 +139,7 @@ function TodosSection() {
       console.error('Fetch error:', error);
       showStatus('Error fetching todos: ' + error.message, 'error');
     }
-  }, [apiFetch]);
+  }, [apiFetch, setTodos, showStatus]);
 
   // Fetch todos when authenticated
   useEffect(() => {

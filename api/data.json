@@ -4,7 +4,7 @@
       "username": "leo",
       "usernameKey": "leo",
       "password": "1234",
-      "token": "97c4c5c45e85c99ba4bf95fe8a7baedc4eac9fbac1b07302c27e19f04417f99e",
+      "token": "3121598fa3d19224299afa8f4ad0e2ad59e05586b177f12a4cf075503fc324de",
       "id": 1
     }
   },
@@ -23,10 +23,19 @@
         "id": "f71f0c89e37b2d4fa3af0e7dc906f451",
         "title": "Task 2",
         "description": "Item 2",
-        "completed": true,
+        "completed": false,
         "createdAt": "2026-02-17T10:24:24.042Z",
-        "editedAt": "2026-02-17T10:56:10.969Z",
-        "completedAt": "2026-02-17T10:56:10.969Z"
+        "editedAt": "2026-02-18T04:21:47.812Z",
+        "completedAt": null
+      },
+      {
+        "id": "4d25c7ef261277a711068bbf1ee7a4f0",
+        "title": "Task 3",
+        "description": "Item 3",
+        "completed": false,
+        "createdAt": "2026-02-18T04:22:26.920Z",
+        "editedAt": null,
+        "completedAt": null
       }
     ]
   }

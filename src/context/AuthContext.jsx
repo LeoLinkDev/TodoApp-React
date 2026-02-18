@@ -103,15 +103,19 @@ export const AuthProvider = ({ children }) => {
           // Ignore errors during logout
         });
       }
-      setUser(null);
-      setAuthToken(null);
-      localStorage.removeItem(STORAGE_KEY);
-    } catch (err) {
-      console.error('Logout error:', err);
+    } finally {
+      // Always clear local state regardless of logout success
       setUser(null);
       setAuthToken(null);
       localStorage.removeItem(STORAGE_KEY);
     }
+  };
+
+  // Force logout without calling the server (for expired tokens)
+  const forceLogout = () => {
+    setUser(null);
+    setAuthToken(null);
+    localStorage.removeItem(STORAGE_KEY);
   };
 
   const value = {
@@ -122,6 +126,7 @@ export const AuthProvider = ({ children }) => {
     register,
     login,
     logout,
+    forceLogout,
     isAuthenticated: !!user && !!authToken
   };
 
