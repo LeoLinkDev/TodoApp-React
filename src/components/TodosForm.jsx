@@ -42,8 +42,7 @@ function TodoForm({ onSubmit, onCancel }) {
           id="cancel-btn"
           className="btn btn-ghost"
           type="button"
-          disabled={!isDirty}
-          onClick={(e) => {
+          onClick={e => {
             e.preventDefault();
             e.currentTarget.form.reset();
             setFormState({ title: '', description: '', completed: false });

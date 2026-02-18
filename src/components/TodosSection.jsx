@@ -38,7 +38,8 @@ function TodosSection() {
   const [editingId, setEditingId] = useState(null);
   const [statusMsg, setStatusMsg] = useState('');
   const [statusType, setStatusType] = useState('default');
-  
+  const [showNewForm, setShowNewForm] = useState(false);
+
   // Celebration state
   const [showCelebration, setShowCelebration] = useState(false);
   const lastActiveCountRef = useRef(initialState.todos.filter(t => !t.completed).length);
@@ -253,7 +254,25 @@ function TodosSection() {
 
       <StatusMsg message={statusMsg} type={statusType} />
 
-      <TodoForm onSubmit={handleCreateTodo} onCancel={() => {}} />
+      {/* Add New Task button */}
+      {!showNewForm && (
+        <button
+          className="btn btn-add-task"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}
+          onClick={() => setShowNewForm(true)}
+        >
+          <span style={{ fontSize: '1.5rem', lineHeight: 1 }}>+</span>
+          Add New Task
+        </button>
+      )}
+
+      {/* New Todo Entry Form */}
+      {showNewForm && (
+        <TodoForm
+          onSubmit={handleCreateTodo}
+          onCancel={() => setShowNewForm(false)}
+        />
+      )}
 
       <TodosListHeader 
         filter={filter} 
