@@ -48,29 +48,16 @@ function TodosSection() {
     setStatusType(type);
   }, [setStatusMsg, setStatusType]);
 
-  const getAuthToken = useCallback(() => {
-    const stored = localStorage.getItem('todoAppAuth');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        return parsed.authToken;
-      } catch (e) {
-        console.error('Failed to parse auth token:', e);
-        return null;
-      }
-    }
-    return null;
-  }, []);
+  // Auth token is already retrieved from useAuth context at the top of the component
 
   const apiFetch = useCallback(async (path, options = {}) => {
-    const token = getAuthToken();
     const headers = {
       'Content-Type': 'application/json',
       ...options.headers
     };
 
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
     } else {
       throw new Error('Not authenticated');
     }
@@ -95,7 +82,7 @@ function TodosSection() {
     }
 
     return response.json();
-  }, [getAuthToken, API_URL, forceLogout]);
+  }, [authToken, API_URL, forceLogout]);
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
@@ -131,12 +118,10 @@ function TodosSection() {
 
   const fetchTodos = useCallback(async () => {
     try {
-      console.log('Fetching todos...');
       const data = await apiFetch('/todos', { method: 'GET' });
       setTodos(data);
       showStatus('Todos refreshed!', 'success');
     } catch (error) {
-      console.error('Fetch error:', error);
       showStatus('Error fetching todos: ' + error.message, 'error');
     }
   }, [apiFetch, setTodos, showStatus]);
@@ -144,8 +129,10 @@ function TodosSection() {
   // Fetch todos when authenticated
   useEffect(() => {
     if (authToken) {
-      // eslint-disable-next-line
-      fetchTodos();
+      const timer = setTimeout(() => {
+        fetchTodos();
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [authToken, fetchTodos]);
 

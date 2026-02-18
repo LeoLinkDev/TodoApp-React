@@ -5,11 +5,7 @@ const Header = () => {
   const { user, logout, isAuthenticated } = useAuth();
 
   const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
+    await logout();
   };
 
   return (

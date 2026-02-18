@@ -5,14 +5,13 @@ import Footer from './components/Footer';
 import Auth from './components/Auth';
 import TodosSection from './components/TodosSection';
 import './App.css';
-import './css/Todos.css';
 
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
-      <div className="container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="loading-container">
         <p>Loading...</p>
       </div>
     );

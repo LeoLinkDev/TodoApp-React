@@ -23,8 +23,7 @@ export const AuthProvider = ({ children }) => {
             setAuthToken(parsed.authToken);
           }
         }
-      } catch (err) {
-        console.error('Failed to load auth state:', err);
+      } catch {
         localStorage.removeItem(STORAGE_KEY);
       } finally {
         setIsLoading(false);
