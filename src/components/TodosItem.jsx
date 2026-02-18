@@ -1,8 +1,29 @@
+import { useState, useEffect } from 'react';
 import TodosItemActions from './TodosItemActions';
+import TodosItemConfetti from './TodosItemConfetti';
 
 function TodosItem({ todo, onEdit, onToggleComplete, onDelete }) {
+  const [showItemConfetti, setShowItemConfetti] = useState(false);
+
+  const handleToggleClick = () => {
+    if (!todo.completed) {
+      // Show confetti when marking as complete
+      setShowItemConfetti(true);
+    }
+    onToggleComplete();
+  };
+
+  useEffect(() => {
+    if (showItemConfetti) {
+      const timer = setTimeout(() => setShowItemConfetti(false), 2200);
+      return () => clearTimeout(timer);
+    }
+  }, [showItemConfetti]);
+
   return (
     <li className={`todo-item${todo.completed ? ' completed' : ''}`}>
+      <TodosItemConfetti isActive={showItemConfetti} />
+      
       <div className="todo-title">
         <div className="todo-title-main">
           <h3>{todo.title}</h3>
@@ -26,7 +47,7 @@ function TodosItem({ todo, onEdit, onToggleComplete, onDelete }) {
       <TodosItemActions
         todo={todo}
         onEdit={onEdit}
-        onToggleComplete={onToggleComplete}
+        onToggleComplete={handleToggleClick}
         onDelete={onDelete}
       />
     </li>

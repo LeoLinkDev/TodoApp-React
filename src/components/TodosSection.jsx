@@ -5,6 +5,7 @@ import StatusMsg from './StatusMsg';
 import TodoForm from './TodosForm';
 import TodosListHeader from './TodosListHeader';
 import TodosList from './TodosList';
+import TodosConfetti from './TodosConfetti';
 import '../css/Todos.css';
 
 const STORAGE_KEY = 'todoAppState';
@@ -37,6 +38,11 @@ function TodosSection() {
   const [editingId, setEditingId] = useState(null);
   const [statusMsg, setStatusMsg] = useState('');
   const [statusType, setStatusType] = useState('default');
+  
+  // Celebration state
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [lastActiveCount, setLastActiveCount] = useState(initialState.todos.filter(t => !t.completed).length);
+  const [lastCompletedCount, setLastCompletedCount] = useState(initialState.todos.filter(t => t.completed).length);
 
   const showStatus = (message, type = 'default') => {
     setStatusMsg(message);
@@ -95,6 +101,29 @@ function TodosSection() {
       sort
     }));
   }, [todos, filter, sort]);
+
+  // Check for all-completed celebration
+  useEffect(() => {
+    const activeCount = todos.filter(t => !t.completed).length;
+    const completedCount = todos.filter(t => t.completed).length;
+    const allCompleted = activeCount === 0 && todos.length > 0;
+
+    // Trigger celebration if:
+    // 1. All todos are completed
+    // 2. We just completed something (activeCount decreased)
+    // 3. We haven't shown celebration yet
+    const justCompletedAll = 
+      allCompleted && 
+      lastActiveCount > 0 && 
+      completedCount > lastCompletedCount;
+
+    if (justCompletedAll && !showCelebration) {
+      setShowCelebration(true);
+    }
+
+    setLastActiveCount(activeCount);
+    setLastCompletedCount(completedCount);
+  }, [todos, lastActiveCount, lastCompletedCount, showCelebration]);
 
   const fetchTodos = useCallback(async () => {
     try {
@@ -252,6 +281,8 @@ function TodosSection() {
         onSaveEdit={handleSaveEdit}
         onCancelEdit={() => setEditingId(null)}
       />
+
+      <TodosConfetti isActive={showCelebration} onAnimationEnd={() => setShowCelebration(false)} />
     </section>
   );
 }
