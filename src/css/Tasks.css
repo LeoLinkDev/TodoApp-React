@@ -12,7 +12,7 @@
   --shadow: 0 20px 40px rgba(17, 24, 39, 0.08);
 }
 
-.todos-container {
+.tasks-container {
   display: block;
 }
 
@@ -82,7 +82,7 @@ button:focus,
   font-weight: 500;
 }
 
-.todo-message {
+.task-message {
   margin: 0;
   min-height: 1.2rem;
   font-size: 0.9rem;
@@ -92,7 +92,7 @@ button:focus,
   background-color: #f0f0f0;
 }
 
-.todo-message.success {
+.task-message.success {
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--accent);
@@ -117,6 +117,22 @@ button:focus,
 .btn:hover {
   background: var(--primary-dark);
   transform: translateY(-1px);
+}
+
+/* Ghost / secondary button */
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+/* Disabled state */
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-ghost:hover {
@@ -191,6 +207,37 @@ button:focus,
 #cancel-edit-btn.btn-ghost:disabled:hover {
   background: var(--primary);
   transform: none;
+}
+
+/* Ensure form-scoped buttons are styled even if other global CSS overrides exist */
+.form .btn {
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 1.1rem;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 12px 24px rgba(79, 70, 229, 0.25);
+}
+
+.form .btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.form .btn-ghost {
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+.form .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .checkbox {
@@ -280,7 +327,7 @@ button:focus,
   color: var(--primary);
 }
 
-.todo-list {
+.task-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -288,11 +335,11 @@ button:focus,
   gap: 1rem;
 }
 
-.todo-list.is-refreshing {
+.task-list.is-refreshing {
   opacity: 0.6;
 }
 
-.todo-list.is-refreshing-active {
+.task-list.is-refreshing-active {
   animation: list-refresh 0.6s ease-in-out 1;
 }
 
@@ -317,7 +364,7 @@ button:focus,
   }
 }
 
-.todo-item {
+.task-item {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1rem;
@@ -328,12 +375,12 @@ button:focus,
   overflow: hidden;
 }
 
-.todo-item.completed {
+.task-item.completed {
   background: rgba(16, 185, 129, 0.08);
   border-color: rgba(16, 185, 129, 0.35);
 }
 
-.todo-item.editing {
+.task-item.editing {
   border-color: rgba(79, 70, 229, 0.45);
   background: rgba(79, 70, 229, 0.04);
 }
@@ -365,33 +412,33 @@ button:focus,
   }
 }
 
-.todo-title {
+.task-title {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 1rem;
 }
 
-.todo-title-main {
+.task-title-main {
   display: flex;
   align-items: center;
   justify-self: start;
   gap: 0.5rem;
 }
 
-.todo-title h3 {
+.task-title h3 {
   margin: 0;
   font-size: 1.1rem;
 }
 
-.todo-edit-label {
+.task-edit-label {
   display: grid;
   gap: 0.35rem;
   font-weight: 600;
   font-size: 1.02rem;
 }
 
-.todo-saved-inline {
+.task-saved-inline {
   justify-self: center;
   font-weight: 700;
   color: var(--accent);
@@ -426,27 +473,27 @@ button:focus,
   }
 }
 
-.todo-title-status {
+.task-title-status {
   justify-self: end;
 }
 
-.todo-meta {
+.task-meta {
   font-size: 0.85rem;
   color: var(--muted);
   margin: 0;
 }
 
-.todo-meta-edited {
+.task-meta-edited {
   margin-top: 0.15rem;
 }
 
-.todo-actions {
+.task-actions {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 
-.todo-actions button {
+.task-actions button {
   padding: 0.4rem 0.75rem;
   border-radius: 10px;
   border: 1px solid var(--primary);
@@ -457,20 +504,20 @@ button:focus,
   box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
 }
 
-.todo-actions button:hover {
+.task-actions button:hover {
   background: var(--primary-dark);
   border-color: var(--primary-dark);
   color: #fff;
 }
 
-.todo-actions .danger {
+.task-actions .danger {
   border-color: rgba(239, 68, 68, 0.85);
   background: var(--danger);
   color: #fff;
   box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);
 }
 
-.todo-actions .danger:hover {
+.task-actions .danger:hover {
   background: #dc2626;
   border-color: #dc2626;
 }

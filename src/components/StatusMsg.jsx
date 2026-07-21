@@ -1,7 +1,7 @@
 function StatusMsg({ message, type }) {
   return (
     <div
-      id="todo-msg"
+      id="task-msg"
       className={`status-msg${type === 'success' ? ' success' : ''}`}
       role="status"
       aria-live="polite"

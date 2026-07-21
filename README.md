@@ -17,7 +17,7 @@ A modern todo application built with React, Node.js, and Express. Features user 
 ## Quick Start
 
 ### Prerequisites
-- Node.js v16+ 
+- Node.js v26.4.0+ 
 - npm v7+
 
 ### Installation & Run

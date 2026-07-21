@@ -1,29 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 const colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6'];
 
-function TodosConfetti({ isActive, onAnimationEnd }) {
-  const [pieces, setPieces] = useState([]);
+const pseudoRandom = (seed) => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+
+function TasksConfetti({ isActive, onAnimationEnd }) {
+  const pieces = useMemo(() => {
+    if (!isActive) {
+      return [];
+    }
+
+    return Array.from({ length: 80 }, (_, i) => ({
+      id: i,
+      left: pseudoRandom(i + 1) * 100,
+      background: colors[i % colors.length],
+      duration: 2.5 + pseudoRandom(i + 101) * 1.5,
+      delay: pseudoRandom(i + 201) * 0.4,
+      rotation: pseudoRandom(i + 301) * 360
+    }));
+  }, [isActive]);
 
   useEffect(() => {
     if (!isActive) {
-      setPieces([]);
-      return;
+      return undefined;
     }
 
-    // Generate confetti pieces
-    const generatedPieces = Array.from({ length: 80 }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      background: colors[i % colors.length],
-      duration: 2.5 + Math.random() * 1.5,
-      delay: Math.random() * 0.4,
-      rotation: Math.random() * 360
-    }));
-
-    setPieces(generatedPieces);
-
-    // Auto-hide after animation completes
     const timer = setTimeout(() => {
       onAnimationEnd();
     }, 2200);
@@ -59,4 +63,4 @@ function TodosConfetti({ isActive, onAnimationEnd }) {
   );
 }
 
-export default TodosConfetti;
+export default TasksConfetti;

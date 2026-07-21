@@ -14,7 +14,7 @@ const Header = () => {
         <div className="brand">
           <span className="logo" aria-hidden="true">✓</span>
           <div>
-            <h1>Todo List</h1>
+            <h1>Task List</h1>
             <p className="subtitle">Simple, secure, and fast</p>
           </div>
         </div>

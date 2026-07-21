@@ -1,8 +1,8 @@
-import TodosItem from './TodosItem';
-import TodosItemEdit from './TodosItemEdit';
+import TasksItem from './TasksItem';
+import TasksItemEdit from './TasksItemEdit';
 
-function TodosList({
-  todos,
+function TasksList({
+  tasks,
   editingId,
   onEdit,
   onToggleComplete,
@@ -11,14 +11,14 @@ function TodosList({
   onCancelEdit
 }) {
   return (
-    <ul id="todo-list" className="todo-list" aria-live="polite">
-      {todos.length === 0 ? (
-        <li className="todo-item">No todos yet. Add one above!</li>
+    <ul id="task-list" className="task-list" aria-live="polite">
+      {tasks.length === 0 ? (
+        <li className="task-item">No tasks yet. Add one above!</li>
       ) : (
-        todos.map((todo) => {
+        tasks.map((todo) => {
           if (todo.id === editingId) {
             return (
-              <TodosItemEdit
+              <TasksItemEdit
                 key={todo.id}
                 todo={todo}
                 onSave={onSaveEdit}
@@ -27,7 +27,7 @@ function TodosList({
             );
           }
           return (
-            <TodosItem
+            <TasksItem
               key={todo.id}
               todo={todo}
               onEdit={() => onEdit(todo.id)}
@@ -41,4 +41,4 @@ function TodosList({
   );
 }
 
-export default TodosList;
+export default TasksList;

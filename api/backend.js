@@ -31,7 +31,7 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 
 // Storage (persisted to disk)
 let users = {};
-let todos = {};
+let tasks = {};
 
 const normalizeUsername = (username) => (username || '').trim().toLowerCase();
 
@@ -49,9 +49,9 @@ const loadData = () => {
     if (!raw) return;
     const parsed = JSON.parse(raw);
     users = parsed.users || {};
-    todos = parsed.todos || {};
+    tasks = parsed.tasks || {};
     const migratedUsers = {};
-    const migratedTodos = {};
+    const migratedTasks = {};
     Object.entries(users).forEach(([key, user]) => {
       const usernameKey = normalizeUsername(user?.username || key);
       if (!usernameKey) return;
@@ -61,22 +61,22 @@ const loadData = () => {
           usernameKey
         };
       }
-      const primaryTodos = Array.isArray(migratedTodos[usernameKey])
-        ? migratedTodos[usernameKey]
+      const primaryTasks = Array.isArray(migratedTasks[usernameKey])
+        ? migratedTasks[usernameKey]
         : [];
-      const incomingTodos = Array.isArray(todos[key])
-        ? todos[key]
-        : (Array.isArray(todos[usernameKey]) ? todos[usernameKey] : []);
-      const merged = [...primaryTodos];
-      incomingTodos.forEach(item => {
+      const incomingTasks = Array.isArray(tasks[key])
+        ? tasks[key]
+        : (Array.isArray(tasks[usernameKey]) ? tasks[usernameKey] : []);
+      const merged = [...primaryTasks];
+      incomingTasks.forEach(item => {
         if (!merged.find(existing => existing.id === item.id)) {
           merged.push(item);
         }
       });
-      migratedTodos[usernameKey] = merged;
+      migratedTasks[usernameKey] = merged;
     });
     users = migratedUsers;
-    todos = migratedTodos;
+    tasks = migratedTasks;
   } catch (error) {
     console.error('Failed to load data store:', error);
   }
@@ -84,7 +84,7 @@ const loadData = () => {
 
 const saveData = () => {
   try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify({ users, todos }, null, 2));
+    fs.writeFileSync(DATA_FILE, JSON.stringify({ users, tasks }, null, 2));
   } catch (error) {
     console.error('Failed to save data store:', error);
   }
@@ -151,7 +151,7 @@ app.post('/register', (req, res) => {
     id: Object.keys(users).length + 1
   };
 
-  todos[usernameKey] = [];
+  tasks[usernameKey] = [];
   saveData();
 
   res.status(201).json({ 
@@ -194,13 +194,13 @@ app.post('/logout', authenticateUser, (req, res) => {
   }
 });
 
-// Create todo
-app.post('/todos', authenticateUser, (req, res) => {
+// Create task
+app.post('/tasks', authenticateUser, (req, res) => {
   const token = extractToken(req.headers.authorization);
   const user = findUserByToken(token);
   const { title, description, completed } = req.body;
-  if (!todos[user.usernameKey]) {
-    todos[user.usernameKey] = [];
+  if (!tasks[user.usernameKey]) {
+    tasks[user.usernameKey] = [];
   }
 
   const newTodo = {
@@ -213,71 +213,71 @@ app.post('/todos', authenticateUser, (req, res) => {
     completedAt: completed ? new Date().toISOString() : null
   };
 
-  todos[user.usernameKey].push(newTodo);
+  tasks[user.usernameKey].push(newTodo);
   saveData();
   res.status(201).json(newTodo);
 });
 
 // Get all todos
-app.get('/todos', authenticateUser, (req, res) => {
+app.get('/tasks', authenticateUser, (req, res) => {
   const token = extractToken(req.headers.authorization);
   const user = findUserByToken(token);
-  if (!todos[user.usernameKey]) {
-    todos[user.usernameKey] = [];
+  if (!tasks[user.usernameKey]) {
+    tasks[user.usernameKey] = [];
   }
-  res.json(todos[user.usernameKey]);
+  res.json(tasks[user.usernameKey]);
 });
 
 // Update todo
-app.put('/todos/:id', authenticateUser, (req, res) => {
+app.put('/tasks/:id', authenticateUser, (req, res) => {
   const token = extractToken(req.headers.authorization);
   const user = findUserByToken(token);
-  const todoId = req.params.id;
+  const taskId = req.params.id;
   const { title, description, completed } = req.body;
-  if (!todos[user.usernameKey]) {
-    todos[user.usernameKey] = [];
+  if (!tasks[user.usernameKey]) {
+    tasks[user.usernameKey] = [];
   }
 
-  const todoToUpdate = todos[user.usernameKey].find(todo => todo.id === todoId);
+  const taskToUpdate = tasks[user.usernameKey].find(task => task.id === taskId);
   
-  if (!todoToUpdate) {
-    return res.status(404).json({ error: 'Todo not found' });
+  if (!taskToUpdate) {
+    return res.status(404).json({ error: 'Task not found' });
   }
 
-  const wasCompleted = todoToUpdate.completed;
-  todoToUpdate.title = title || todoToUpdate.title;
-  todoToUpdate.description = description || todoToUpdate.description;
+  const wasCompleted = taskToUpdate.completed;
+  taskToUpdate.title = title || taskToUpdate.title;
+  taskToUpdate.description = description || taskToUpdate.description;
   if (completed !== undefined) {
-    todoToUpdate.completed = completed;
+    taskToUpdate.completed = completed;
     if (!wasCompleted && completed) {
-      todoToUpdate.completedAt = new Date().toISOString();
+      taskToUpdate.completedAt = new Date().toISOString();
     }
     if (wasCompleted && !completed) {
-      todoToUpdate.completedAt = null;
+      taskToUpdate.completedAt = null;
     }
   }
-  todoToUpdate.editedAt = new Date().toISOString();
+  taskToUpdate.editedAt = new Date().toISOString();
 
   saveData();
-  res.json(todoToUpdate);
+  res.json(taskToUpdate);
 });
 
 // Delete todo
-app.delete('/todos/:id', authenticateUser, (req, res) => {
+app.delete('/tasks/:id', authenticateUser, (req, res) => {
   const token = extractToken(req.headers.authorization);
   const user = findUserByToken(token);
-  const todoId = req.params.id;
-  if (!todos[user.usernameKey]) {
-    todos[user.usernameKey] = [];
+  const taskId = req.params.id;
+  if (!tasks[user.usernameKey]) {
+    tasks[user.usernameKey] = [];
   }
 
-  const todoIndex = todos[user.usernameKey].findIndex(todo => todo.id === todoId);
+  const taskIndex = tasks[user.usernameKey].findIndex(task => task.id === taskId);
   
-  if (todoIndex === -1) {
-    return res.status(404).json({ error: 'Todo not found' });
+  if (taskIndex === -1) {
+    return res.status(404).json({ error: 'Task not found' });
   }
 
-  todos[user.usernameKey].splice(todoIndex, 1);
+  tasks[user.usernameKey].splice(taskIndex, 1);
   saveData();
   res.status(204).send();
 });

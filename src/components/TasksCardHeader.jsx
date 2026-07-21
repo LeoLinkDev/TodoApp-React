@@ -1,7 +1,7 @@
-function CardHeader({ onRefresh, isDisabled }) {
+function TasksCardHeader({ onRefresh, isDisabled }) {
   return (
     <div className="card-header">
-      <h2 id="todos-title">Your Todos</h2>
+      <h2 id="tasks-title">Your Tasks</h2>
       <button
         id="refresh-btn"
         className="btn btn-ghost"
@@ -15,4 +15,4 @@ function CardHeader({ onRefresh, isDisabled }) {
   );
 }
 
-export default CardHeader;
+export default TasksCardHeader;

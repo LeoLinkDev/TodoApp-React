@@ -1,6 +1,6 @@
-function TodosItemActions({ todo, onEdit, onToggleComplete, onDelete }) {
+function TasksItemActions({ todo, onEdit, onToggleComplete, onDelete }) {
   return (
-    <div className="todo-actions">
+    <div className="task-actions">
       <button type="button" onClick={onEdit}>
         Edit
       </button>
@@ -14,4 +14,4 @@ function TodosItemActions({ todo, onEdit, onToggleComplete, onDelete }) {
   );
 }
 
-export default TodosItemActions;
+export default TasksItemActions;

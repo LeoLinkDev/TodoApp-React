@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import TodosItemActions from './TodosItemActions';
-import TodosItemConfetti from './TodosItemConfetti';
+import TasksItemActions from './TasksItemActions';
+import TasksItemConfetti from './TasksItemConfetti';
 
-function TodosItem({ todo, onEdit, onToggleComplete, onDelete }) {
+function TasksItem({ todo, onEdit, onToggleComplete, onDelete }) {
   const [showItemConfetti, setShowItemConfetti] = useState(false);
 
   const handleToggleClick = () => {
@@ -21,30 +21,30 @@ function TodosItem({ todo, onEdit, onToggleComplete, onDelete }) {
   }, [showItemConfetti]);
 
   return (
-    <li className={`todo-item${todo.completed ? ' completed' : ''}`}>
-      <TodosItemConfetti isActive={showItemConfetti} />
+    <li className={`task-item${todo.completed ? ' completed' : ''}`}>
+      <TasksItemConfetti isActive={showItemConfetti} />
       
-      <div className="todo-title">
-        <div className="todo-title-main">
+      <div className="task-title">
+        <div className="task-title-main">
           <h3>{todo.title}</h3>
         </div>
-        <span className="todo-meta todo-title-status">
+        <span className="task-meta task-title-status">
           {todo.completed ? 'Completed' : 'Active'}
         </span>
       </div>
       <p>{todo.description}</p>
-      <p className="todo-meta">Created {new Date(todo.createdAt).toLocaleString()}</p>
-      <p className="todo-meta todo-meta-edited">
+      <p className="task-meta">Created {new Date(todo.createdAt).toLocaleString()}</p>
+      <p className="task-meta task-meta-edited">
         {todo.editedAt
           ? `Edited ${new Date(todo.editedAt).toLocaleString()}`
           : 'Edited —'}
       </p>
-      <p className="todo-meta todo-meta-edited">
+      <p className="task-meta task-meta-edited">
         {todo.completedAt
           ? `Completed ${new Date(todo.completedAt).toLocaleString()}`
           : 'Completed —'}
       </p>
-      <TodosItemActions
+      <TasksItemActions
         todo={todo}
         onEdit={onEdit}
         onToggleComplete={handleToggleClick}
@@ -54,4 +54,4 @@ function TodosItem({ todo, onEdit, onToggleComplete, onDelete }) {
   );
 }
 
-export default TodosItem;
+export default TasksItem;

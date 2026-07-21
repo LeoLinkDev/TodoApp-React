@@ -1,38 +1,54 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import CardHeader from './TodosCardHeader';
+import CardHeader from './TasksCardHeader';
 import StatusMsg from './StatusMsg';
-import TodoForm from './TodosForm';
-import TodosListHeader from './TodosListHeader';
-import TodosList from './TodosList';
-import TodosConfetti from './TodosConfetti';
-import '../css/Todos.css';
+import TasksForm from './TasksForm';
+import TasksListHeader from './TasksListHeader';
+import TasksList from './TasksList';
+import TasksConfetti from './TasksConfetti';
+import '../css/Tasks.css';
 
-const STORAGE_KEY = 'todoAppState';
+const OLD_STORAGE_KEY = 'todoAppState';
+const STORAGE_KEY = 'tasksAppState';
 
 const loadStateFromStorage = () => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return { todos: [], filter: 'all', sort: 'created' };
+  // migrate old key if present
   try {
+    const old = localStorage.getItem(OLD_STORAGE_KEY);
+    if (old) {
+      const parsedOld = JSON.parse(old);
+      const migrated = {
+        tasks: Array.isArray(parsedOld.todos) ? parsedOld.todos : [],
+        filter: parsedOld.filter || 'all',
+        sort: parsedOld.sort || 'created'
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      localStorage.removeItem(OLD_STORAGE_KEY);
+      return migrated;
+    }
+
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return { tasks: [], filter: 'all', sort: 'created' };
     const parsed = JSON.parse(saved);
     return {
-      todos: Array.isArray(parsed.todos) ? parsed.todos : [],
+      tasks: Array.isArray(parsed.tasks) ? parsed.tasks : [],
       filter: parsed.filter || 'all',
       sort: parsed.sort || 'created'
     };
   } catch {
     localStorage.removeItem(STORAGE_KEY);
-    return { todos: [], filter: 'all', sort: 'created' };
+    localStorage.removeItem(OLD_STORAGE_KEY);
+    return { tasks: [], filter: 'all', sort: 'created' };
   }
 };
 
-function TodosSection() {
+function TasksSection() {
   const { authToken, forceLogout } = useAuth();
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   const initialState = loadStateFromStorage();
 
-  const [todos, setTodos] = useState(initialState.todos);
+  const [tasks, setTasks] = useState(initialState.tasks);
   const [filter, setFilter] = useState(initialState.filter);
   const [sort, setSort] = useState(initialState.sort);
   const [editingId, setEditingId] = useState(null);
@@ -42,14 +58,12 @@ function TodosSection() {
 
   // Celebration state
   const [showCelebration, setShowCelebration] = useState(false);
-  const lastActiveCountRef = useRef(initialState.todos.filter(t => !t.completed).length);
+  const lastActiveCountRef = useRef(initialState.tasks.filter(t => !t.completed).length);
 
   const showStatus = useCallback((message, type = 'default') => {
     setStatusMsg(message);
     setStatusType(type);
   }, [setStatusMsg, setStatusType]);
-
-  // Auth token is already retrieved from useAuth context at the top of the component
 
   const apiFetch = useCallback(async (path, options = {}) => {
     const headers = {
@@ -69,7 +83,6 @@ function TodosSection() {
     });
 
     if (!response.ok) {
-      // Handle 401 Unauthorized - token expired or invalid
       if (response.status === 401) {
         forceLogout();
         throw new Error('Session expired. Please log in again.');
@@ -88,46 +101,41 @@ function TodosSection() {
   // Save state to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      todos,
+      tasks,
       filter,
       sort
     }));
-  }, [todos, filter, sort]);
+  }, [tasks, filter, sort]);
 
   // Trigger celebration when all todos are completed
   useEffect(() => {
-    const activeCount = todos.filter(t => !t.completed).length;
-    const allCompleted = activeCount === 0 && todos.length > 0;
+    const activeCount = tasks.filter(t => !t.completed).length;
+    const allCompleted = activeCount === 0 && tasks.length > 0;
 
-    // Check if we just completed the last active todo
     if (allCompleted && lastActiveCountRef.current > 0) {
-      // Use setTimeout with 0 to defer setState and avoid the warning
       const celebrationTimer = setTimeout(() => {
         setShowCelebration(true);
         const hideTimer = setTimeout(() => {
           setShowCelebration(false);
-        }, 5000); // Auto-hide after 5 seconds
+        }, 5000);
         return () => clearTimeout(hideTimer);
       }, 0);
-      
       return () => clearTimeout(celebrationTimer);
     }
 
-    // Update refs after checking conditions
     lastActiveCountRef.current = activeCount;
-  }, [todos]);
+  }, [tasks]);
 
   const fetchTodos = useCallback(async () => {
     try {
-      const data = await apiFetch('/todos', { method: 'GET' });
-      setTodos(data);
-      showStatus('Todos refreshed!', 'success');
+      const data = await apiFetch('/tasks', { method: 'GET' });
+      setTasks(data);
+      showStatus('Tasks refreshed!', 'success');
     } catch (error) {
-      showStatus('Error fetching todos: ' + error.message, 'error');
+      showStatus('Error fetching tasks: ' + error.message, 'error');
     }
-  }, [apiFetch, setTodos, showStatus]);
+  }, [apiFetch, setTasks, showStatus]);
 
-  // Fetch todos when authenticated
   useEffect(() => {
     if (authToken) {
       const timer = setTimeout(() => {
@@ -152,15 +160,15 @@ function TodosSection() {
     }
 
     try {
-      const created = await apiFetch('/todos', {
+      const created = await apiFetch('/tasks', {
         method: 'POST',
         body: JSON.stringify(payload)
       });
-      setTodos([created, ...todos]);
+      setTasks([created, ...tasks]);
       e.target.reset();
-      showStatus('Todo saved successfully!', 'success');
+      showStatus('Task saved successfully!', 'success');
     } catch (error) {
-      showStatus('Error saving todo: ' + error.message, 'error');
+      showStatus('Error saving task: ' + error.message, 'error');
     }
   };
 
@@ -171,7 +179,7 @@ function TodosSection() {
     }
 
     try {
-      const updated = await apiFetch(`/todos/${todoId}`, {
+      const updated = await apiFetch(`/tasks/${todoId}`, {
         method: 'PUT',
         body: JSON.stringify({
           title: title.trim(),
@@ -179,9 +187,9 @@ function TodosSection() {
           completed
         })
       });
-      setTodos(todos.map((item) => (item.id === updated.id ? updated : item)));
+      setTasks(tasks.map((item) => (item.id === updated.id ? updated : item)));
       setEditingId(null);
-      showStatus('Todo updated successfully!', 'success');
+      showStatus('Task updated successfully!', 'success');
     } catch (error) {
       showStatus(error.message, 'error');
     }
@@ -189,7 +197,7 @@ function TodosSection() {
 
   const handleToggleComplete = async (todo) => {
     try {
-      const updated = await apiFetch(`/todos/${todo.id}`, {
+      const updated = await apiFetch(`/tasks/${todo.id}`, {
         method: 'PUT',
         body: JSON.stringify({
           title: todo.title,
@@ -203,9 +211,9 @@ function TodosSection() {
       if (todo.completed && !updated.completed) {
         updated.completedAt = null;
       }
-      setTodos(todos.map((item) => (item.id === updated.id ? updated : item)));
+      setTasks(tasks.map((item) => (item.id === updated.id ? updated : item)));
       showStatus(
-        updated.completed ? 'Todo marked as completed!' : 'Todo marked as active!',
+        updated.completed ? 'Task marked as completed!' : 'Task marked as active!',
         'success'
       );
     } catch (error) {
@@ -215,15 +223,15 @@ function TodosSection() {
 
   const handleDeleteTodo = async (todoId) => {
     try {
-      await apiFetch(`/todos/${todoId}`, { method: 'DELETE' });
-      setTodos(todos.filter((item) => item.id !== todoId));
-      showStatus('Todo deleted successfully!', 'success');
+      await apiFetch(`/tasks/${todoId}`, { method: 'DELETE' });
+      setTasks(tasks.filter((item) => item.id !== todoId));
+      showStatus('Task deleted successfully!', 'success');
     } catch (error) {
       showStatus(error.message, 'error');
     }
   };
 
-  const filteredAndSorted = todos
+  const filteredAndSorted = tasks
     .slice()
     .sort((a, b) => {
       if (sort === 'created') {
@@ -249,12 +257,11 @@ function TodosSection() {
     });
 
   return (
-    <section id="todos-section" className="card" aria-labelledby="todos-title">
+    <section id="tasks-section" className="card" aria-labelledby="tasks-title">
       <CardHeader onRefresh={fetchTodos} isDisabled={filteredAndSorted.length === 0} />
 
       <StatusMsg message={statusMsg} type={statusType} />
 
-      {/* Add New Task button */}
       {!showNewForm && (
         <button
           className="btn btn-add-task"
@@ -266,24 +273,23 @@ function TodosSection() {
         </button>
       )}
 
-      {/* New Todo Entry Form */}
       {showNewForm && (
-        <TodoForm
+        <TasksForm
           onSubmit={handleCreateTodo}
           onCancel={() => setShowNewForm(false)}
         />
       )}
 
-      <TodosListHeader 
-        filter={filter} 
-        sort={sort} 
+      <TasksListHeader
+        filter={filter}
+        sort={sort}
         onFilterChange={setFilter}
         onSortChange={setSort}
         isSortDisabled={filteredAndSorted.length <= 1}
       />
 
-      <TodosList
-        todos={filteredAndSorted}
+      <TasksList
+        tasks={filteredAndSorted}
         editingId={editingId}
         onEdit={setEditingId}
         onToggleComplete={handleToggleComplete}
@@ -292,9 +298,9 @@ function TodosSection() {
         onCancelEdit={() => setEditingId(null)}
       />
 
-      <TodosConfetti isActive={showCelebration} onAnimationEnd={() => setShowCelebration(false)} />
+      <TasksConfetti isActive={showCelebration} onAnimationEnd={() => setShowCelebration(false)} />
     </section>
   );
 }
 
-export default TodosSection;
+export default TasksSection;

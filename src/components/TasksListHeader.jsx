@@ -1,8 +1,8 @@
-function TodosListHeader({ filter, sort, onFilterChange, onSortChange, isSortDisabled }) {
+function TasksListHeader({ filter, sort, onFilterChange, onSortChange, isSortDisabled }) {
   return (
     <div className="list-header">
       <span>Items</span>
-      <div className="filters" role="group" aria-label="Filter todos">
+      <div className="filters" role="group" aria-label="Filter tasks">
         <button
           className={`chip${filter === 'all' ? ' active' : ''}`}
           type="button"
@@ -25,17 +25,11 @@ function TodosListHeader({ filter, sort, onFilterChange, onSortChange, isSortDis
           Completed
         </button>
         <label className="sort-select">
-          <span className="visually-hidden">Sort todos</span>
+          <span className="visually-hidden">Sort tasks</span>
           <span className="sort-prefix" aria-hidden="true">
             Sort:
           </span>
-          <select
-            id="sort-select"
-            aria-label="Sort todos"
-            value={sort}
-            onChange={(e) => onSortChange(e.target.value)}
-            disabled={isSortDisabled}
-          >
+          <select value={sort} onChange={e => onSortChange(e.target.value)} disabled={isSortDisabled} aria-label="Sort tasks">
             <option value="created">Created</option>
             <option value="edited">Edited</option>
             <option value="title">Title</option>
@@ -47,4 +41,4 @@ function TodosListHeader({ filter, sort, onFilterChange, onSortChange, isSortDis
   );
 }
 
-export default TodosListHeader;
+export default TasksListHeader;
