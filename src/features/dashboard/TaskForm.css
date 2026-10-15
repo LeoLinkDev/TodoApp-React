@@ -1,0 +1,185 @@
+/* Handles form's task creation + editing; title, description, and completion status. */
+.form {
+  display: grid;
+  gap: 1rem;
+}
+/* Ensure form-scoped buttons are styled even if other global CSS overrides exist */
+.form .btn {
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 1.1rem;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 12px 24px rgba(79, 70, 229, 0.25);
+}
+
+.form .btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.form .btn-ghost {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25);
+}
+
+.form .btn-ghost:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.form .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 1.1rem;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 12px 24px rgba(79, 70, 229, 0.25);
+}
+
+/* Hover state for primary button */
+.btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* Ghost / secondary button */
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+/* Disabled state */
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Hover state for ghost button */
+.btn-ghost:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* Disabled state for ghost button */
+.btn:disabled:hover,
+.btn-ghost:disabled:hover {
+  background: var(--primary);
+  transform: none;
+  color: #fff;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.btn-ghost:disabled {
+  background: var(--primary);
+  color: #fff !important;
+  border-color: var(--primary);
+}
+
+.btn-ghost {
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25);
+}
+
+.card .btn-ghost {
+  border-color: var(--primary);
+  color: #fff;
+}
+
+#cancel-edit-btn.btn-ghost {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 12px 24px rgba(79, 70, 229, 0.25);
+}
+
+#cancel-edit-btn.btn-ghost:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+#cancel-edit-btn.btn-ghost:disabled:hover {
+  background: var(--primary);
+  transform: none;
+}
+
+#refresh-btn.btn-ghost {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 12px 24px rgba(79, 70, 229, 0.25);
+}
+
+#refresh-btn.btn-ghost:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+#refresh-btn.btn-ghost:disabled:hover {
+  background: var(--primary);
+  transform: none;
+}
+
+#refresh-btn.is-refreshing {
+  animation: refresh-fade 0.6s ease-in-out 1;
+}
+
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 600;
+}
+
+.checkbox input {
+  margin: 0;
+}
+
+input,
+textarea {
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font: inherit;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+button:focus,
+.chip:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}

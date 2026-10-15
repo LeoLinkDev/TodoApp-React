@@ -1,10 +1,10 @@
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './hooks/useAuth';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Auth from './components/Auth';
-import TasksSection from './components/TasksSection';
-import './App.css';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+import Auth from './features/auth/Auth';
+import TasksSection from './features/dashboard/TaskSection';
+import './styles/App.css';
 
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();

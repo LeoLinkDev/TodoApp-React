@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
+            Authorization: `Bearer ${authToken}`
           }
         }).catch(() => {
           // Ignore errors during logout
